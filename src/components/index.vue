@@ -97,17 +97,12 @@
                 />
             </div>
             <van-index-bar :index-list="indexList">
-                <!-- <div>
-                <van-index-anchor  index="当前定位"></van-index-anchor>
-                <van-cell><van-icon name="location-o" color="#07c160" />重庆</van-cell>
-                </div> -->
                 <div v-for="(city, index) in cityList" :key="index">
-                    <!-- <van-index-anchor  :index="city.name" v-if="index==0&&searchCity==''">★热门城市</van-index-anchor> -->
                     <van-index-anchor  :index="city.name" ></van-index-anchor>
                     <div style="background:#fff;width:100%;" v-if="index<2&&searchCity==''">
                      <van-button type="default" style="background-color:#f6f6f6;margin:5px;border:none;" v-for="(tem, index) in city.cities" :key="index" :text="tem.name" @click="changeCity(tem.name)" ></van-button>
                     </div>
-                    <div v-else>
+                    <div v-else> 
                     <van-cell v-for="(tem, index) in city.cities" :key="index" :title="tem.name" @click="changeCity(tem.name)"></van-cell>
                     </div>
                 </div>
