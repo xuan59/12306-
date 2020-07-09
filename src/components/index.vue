@@ -97,12 +97,19 @@
                 />
             </div>
             <van-index-bar :index-list="indexList">
+                <!-- <div>
                 <van-index-anchor  index="当前定位"></van-index-anchor>
                 <van-cell><van-icon name="location-o" color="#07c160" />重庆</van-cell>
+                </div> -->
                 <div v-for="(city, index) in cityList" :key="index">
-                    <van-index-anchor  :index="city.name" v-if="index==0">★热门城市</van-index-anchor>
-                    <van-index-anchor  :index="city.name" v-else></van-index-anchor>
+                    <!-- <van-index-anchor  :index="city.name" v-if="index==0&&searchCity==''">★热门城市</van-index-anchor> -->
+                    <van-index-anchor  :index="city.name" ></van-index-anchor>
+                    <div style="background:#fff;width:100%;" v-if="index<2&&searchCity==''">
+                     <van-button type="default" style="background-color:#f6f6f6;margin:5px;border:none;" v-for="(tem, index) in city.cities" :key="index" :text="tem.name" @click="changeCity(tem.name)" ></van-button>
+                    </div>
+                    <div v-else>
                     <van-cell v-for="(tem, index) in city.cities" :key="index" :title="tem.name" @click="changeCity(tem.name)"></van-cell>
+                    </div>
                 </div>
             </van-index-bar>
         </van-popup>
@@ -207,31 +214,72 @@ export default {
         }
     },
     created() {
+        this.cityList = []
         var a = JSON.stringify(cityData)
-        this.cityList = JSON.parse(a)
-        this.cityList.forEach(data=>{
+        this.indexList.push('历史')
+        this.cityList.push({
+            name: '历史',
+            cities: [
+                {
+                    name: "北京市",
+                    tags: "BEIJING,北京市",
+                    cityid: 1
+                },
+                {
+                    name: "重庆市",
+                    tags: "CHONGQING,重庆市",
+                    cityid: 18
+                },
+            ]
+        })
+        var c = JSON.parse(a)
+        c.forEach(data=>{
             this.indexList.push(data.name)
+            this.cityList.push(data)
         })
     },
     watch: {
         searchCity:function(search){
             this.cityList = []
+            this.indexList = []
             var a = JSON.stringify(cityData)
             var data = JSON.parse(a)
+            var i = 0
             data.forEach(data => {
-                var b = data.cities.filter(item => item.name.toLowerCase().includes(search) || item.tags.toLowerCase().includes(search))
-                if(b.length > 0){
+                if(i == 0 && search == ''){
+                    i = 1
+                    this.indexList.push('历史')
                     this.cityList.push({
-                        name: data.name,
-                        cities: b
-                    })
+                            name: '历史',
+                            cities: [
+                                {
+                                    name: "北京市",
+                                    tags: "BEIJING,北京市",
+                                    cityid: 1
+                                },
+                                {
+                                    name: "重庆市",
+                                    tags: "CHONGQING,重庆市",
+                                    cityid: 18
+                                },
+                            ]
+                        })
+                }
+                if(i == 0 && search != ''){
+                    i = 1
 
+                }else{
+                    var b = data.cities.filter(item => item.name.toLowerCase().includes(search) || item.tags.toLowerCase().includes(search))
+                    if(b.length > 0){
+                        this.cityList.push({
+                            name: data.name,
+                            cities: b
+                        })
+                        this.indexList.push(data.name)
+                    }
                 }
             });
-            
-            console.log(cityData)
-            console.log(this.cityList)
-            console.log(data)
+        
         }
     }
 

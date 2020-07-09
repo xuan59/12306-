@@ -1,6 +1,6 @@
 export var cityData = [
 	{
-		name: "★",
+		name: "热门",
 		cities: [
 			{
 				name: "北京市",
