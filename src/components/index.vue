@@ -52,6 +52,7 @@
                         block
                         type="info"
                         size="small"
+                        @click="toList"
                     >查询</van-button>
                 </div>
             </div>
@@ -206,6 +207,9 @@ export default {
                 this.destination = city
             }
             this.showCity = false
+        },
+        toList(){
+            this.$router.push('/train_list')
         }
     },
     created() {
