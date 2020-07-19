@@ -132,11 +132,13 @@ export default {
             oneWay: "单程",
             type: 1,
             active: 0,
-            origin: "重庆",
+            origin: '',
             isOrigin: true,
-            destination: "合川",
-            originDate: "6月24日 周三",
-            destinationDate: "6月24日 周三",
+            destination: '',
+            originDate: '',
+            destinationDate: '',
+            day:['日','一','二','三','四','五','六'],
+            date: '',
             showDate1: false,
             showDate2: false,
             showCity: false,
@@ -180,16 +182,23 @@ export default {
             this.origin = this.destination;
             this.destination = city;
         },
-        onConfirm(date) {
+        setDate(date){
             if (this.oneWay == "单程") {
+                var week = date.getDay();
                 this.originDate =
-                    date.getMonth() + 1 + "月" + date.getDate() + "日";
+                    date.getMonth() + 1 + "月" + date.getDate() + "日 周" + this.day[week];
             } else {
+                var week = date[0].getDay();
+                var week2 = date[1].getDay();
                 this.originDate =
-                    date[0].getMonth() + 1 + "月" + date[0].getDate() + "日";
+                    date[0].getMonth() + 1 + "月" + date[0].getDate() + "日 周" + this.day[week];
                 this.destinationDate =
-                    date[1].getMonth() + 1 + "月" + date[1].getDate() + "日";
+                    date[1].getMonth() + 1 + "月" + date[1].getDate() + "日 周" + this.day[week2];
             }
+        },
+        onConfirm(date) {
+            this.date = date
+            this.setDate(date)
             this.showDate1 = false;
         },
         changeShowCity(type){
@@ -209,7 +218,17 @@ export default {
             this.showCity = false
         },
         toList(){
-            this.$router.push('/train_list')
+            this.cookie.set('oneWay', this.oneWay)
+            this.cookie.set('origin', this.origin)
+            this.cookie.set('destination', this.destination)
+            this.cookie.set('date', this.date)
+            this.$router.push({
+                name:'TrainList',
+                params:{
+                    'student': this.student,
+                    'bulletTrain': this.bulletTrain,
+                }
+            })
         }
     },
     created() {
@@ -220,13 +239,13 @@ export default {
             name: '历史',
             cities: [
                 {
-                    name: "北京市",
-                    tags: "BEIJING,北京市",
+                    name: "北京",
+                    tags: "BEIJING,北京",
                     cityid: 1
                 },
                 {
-                    name: "重庆市",
-                    tags: "CHONGQING,重庆市",
+                    name: "重庆",
+                    tags: "CHONGQING,重庆",
                     cityid: 18
                 },
             ]
@@ -236,6 +255,20 @@ export default {
             this.indexList.push(data.name)
             this.cityList.push(data)
         })
+
+        this.oneWay = this.cookie.get('oneWay')
+        this.origin = this.cookie.get('origin')
+        this.destination = this.cookie.get('destination')
+        var dates = this.cookie.get('date').split(",")
+        if(dates.length == 1){
+            this.date = new Date(dates[0])
+        }else if(dates.length == 2){
+            this.date[0] = new Date(dates[0])
+            this.date[1] = new Date(dates[1])
+        }else{
+            this.date = new Date()
+        }
+        this.setDate(this.date)
     },
     watch: {
         searchCity:function(search){
